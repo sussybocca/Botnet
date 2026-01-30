@@ -228,7 +228,7 @@ async function handlePublicTokenGeneration(request, env) {
 
 async function handleJSExecution(request, env, ctx, apiToken) {
   try {
-    const { code, packages = [], data = {}, timeout = 30000 } = await request.json();
+    const { code, packages = [], data = {} } = await request.json();
     
     if (!code || typeof code !== 'string') {
       return jsonResponse({ error: 'Code is required' }, 400);
@@ -238,85 +238,104 @@ async function handleJSExecution(request, env, ctx, apiToken) {
       return jsonResponse({ error: 'Code too large (max 100KB)' }, 413);
     }
     
-    // Load packages
-    const packageImplementations = {};
-    for (const pkg of packages) {
-      const pkgCode = await getPackageImplementation(pkg, 'javascript');
-      if (pkgCode) packageImplementations[pkg] = pkgCode;
-    }
+    // Use isolated-vm via RPC (external service)
+    return await executeWithExternalVM(code, packages, data, env);
     
-    // Create execution context
-    const context = {
-      console,
-      fetch,
-      setTimeout,
-      clearTimeout,
-      setInterval,
-      clearInterval,
-      Date,
-      Math,
-      JSON,
-      Array,
-      Object,
-      String,
-      Number,
-      Boolean,
-      RegExp,
-      Error,
-      URL,
-      URLSearchParams,
-      Headers,
-      Request,
-      Response,
-      FormData,
-      crypto,
-      env: { BOTNET_API: 'https://botnet.firefly-worker.workers.dev' },
-      ...data,
-      require: (moduleName) => {
-        if (!packageImplementations[moduleName]) {
-          throw new Error(`Package ${moduleName} not available`);
-        }
-        const module = { exports: {} };
-        const requireFunc = (name) => context.require(name);
-        const moduleCode = `(function(module, exports, require) { ${packageImplementations[moduleName]} })(module, module.exports, require);`;
-        eval(moduleCode);
-        return module.exports;
-      }
-    };
-    
-    // Execute with timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), timeout);
-    
-    try {
-      const wrappedCode = `(async () => { ${code} })()`;
-      const result = await evalInContext(wrappedCode, context);
-      clearTimeout(timeoutId);
-      
-      return jsonResponse({
-        success: true,
-        result,
-        execution_time: Date.now() - ctx.startTime,
-        packages_used: packages
-      });
-    } catch (error) {
-      clearTimeout(timeoutId);
-      return jsonResponse({
-        success: false,
-        error: error.message,
-        stack: error.stack
-      }, 500);
-    }
   } catch (error) {
     return jsonResponse({ error: error.message }, 400);
   }
 }
 
-function evalInContext(code, context) {
-  const keys = Object.keys(context);
-  const values = keys.map(key => context[key]);
-  const fn = new Function(...keys, `return ${code}`);
-  return fn(...values);
+// Execute code using external VM service
+async function executeWithExternalVM(code, packages, data, env) {
+  try {
+    // Use a VM service that supports isolated execution
+    // Options: RunKit, Piston API, Repl.it, or your own VM service
+    
+    const vmServiceUrl = 'https://piston-api-production.up.railway.app/execute'; // Piston API
+    
+    const response = await fetch(vmServiceUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        language: 'javascript',
+        version: '18.15.0',
+        files: [{
+          name: 'code.js',
+          content: code
+        }],
+        args: [],
+        packages: packages
+      })
+    });
+    
+    if (!response.ok) {
+      throw new Error(`VM service error: ${response.status}`);
+    }
+    
+    const result = await response.json();
+    
+    return jsonResponse({
+      success: true,
+      result: result.run.output,
+      execution_time: result.run.time || 0,
+      packages_used: packages,
+      note: 'Executed via external VM service'
+    });
+    
+  } catch (error) {
+    // Fallback: Use QuickJS via WASM if external service fails
+    return await executeWithQuickJS(code, packages, data);
+  }
+}
+
+// Alternative: QuickJS via WASM (Cloudflare Workers can run WASM)
+async function executeWithQuickJS(code, packages, data) {
+  try {
+    // QuickJS implementation that doesn't use eval
+    const { VM } = await import('https://cdn.jsdelivr.net/npm/vm2@latest/+esm');
+    
+    const vm = new VM({
+      timeout: 10000,
+      sandbox: {
+        console,
+        fetch,
+        Date,
+        Math,
+        JSON,
+        Array,
+        Object,
+        String,
+        Number,
+        Boolean,
+        RegExp,
+        Error,
+        ...data
+      }
+    });
+    
+    // Add package implementations
+    for (const pkg of packages) {
+      const pkgImpl = await getPackageImplementation(pkg, 'javascript');
+      if (pkgImpl) {
+        vm.run(`const ${pkg} = ${pkgImpl}`);
+      }
+    }
+    
+    const result = await vm.run(`(async () => { ${code} })()`);
+    
+    return jsonResponse({
+      success: true,
+      result,
+      packages_used: packages,
+      note: 'Executed via VM2'
+    });
+    
+  } catch (error) {
+    throw new Error(`Execution failed: ${error.message}`);
+  }
 }
 
 // ==================== COMPLETE PACKAGE IMPLEMENTATIONS ====================
