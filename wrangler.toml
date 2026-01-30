@@ -1,0 +1,70 @@
+name = "botnet-api"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# KV Namespaces for rate limiting and bot storage
+kv_namespaces = [
+  { binding = "BOTNET_KV", id = "your-kv-namespace-id-here", preview_id = "your-preview-kv-id" },
+  { binding = "BOTNET_BOTS", id = "your-bots-kv-id-here", preview_id = "your-bots-preview-id" }
+]
+
+# Variables for email service (optional)
+vars = { 
+  SENDGRID_API_KEY = "optional-sendgrid-key", 
+  BOTNET_API_KEY = "your-secret-api-key" 
+}
+
+# Routes (choose one or both)
+routes = [
+  { pattern = "botnet-api.your-domain.workers.dev", custom_domain = true },
+  { pattern = "api.your-domain.com/Botnet/*", zone_name = "your-domain.com" }
+]
+
+# Cron Triggers for scheduled bots (optional)
+triggers = { crons = ["*/10 * * * *"] }
+
+# Limits
+[limits]
+cpu_ms = 10000  # 10 seconds CPU time
+max_scripts = 10
+
+# Build configuration (if using TypeScript or build process)
+[build]
+command = "npm run build"
+upload = { format = "service-worker" }
+
+# Deployment environments
+[env.production]
+name = "botnet-api-production"
+kv_namespaces = [
+  { binding = "BOTNET_KV", id = "production-kv-id" },
+  { binding = "BOTNET_BOTS", id = "production-bots-kv-id" }
+]
+vars = { ENVIRONMENT = "production" }
+
+[env.staging]
+name = "botnet-api-staging"
+kv_namespaces = [
+  { binding = "BOTNET_KV", id = "staging-kv-id" },
+  { binding = "BOTNET_BOTS", id = "staging-bots-kv-id" }
+]
+vars = { ENVIRONMENT = "staging" }
+
+[dev]
+port = 8787
+ip = "127.0.0.1"
+local_protocol = "http"
+
+# For larger packages/memory needs
+[placement]
+mode = "smart"
+
+# Logging (for paid plans)
+[logpush]
+enabled = false
+
+# Analytics (for paid plans)
+[analytics_engine_datasets]
+- binding = "BOTNET_ANALYTICS"
+  dataset = "botnet_requests"
