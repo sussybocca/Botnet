@@ -1,7 +1,31 @@
-name = "botnet"
+name = "botnet-worker"
 main = "worker.js"
 compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
 
+# KV Namespace Bindings (these should match your dashboard bindings)
+[[kv_namespaces]]
+binding = "BOTNET_KV"
+id = "4fde3a045be140e28f581b9a3fe3f088"  
+
+# Environment Variables
 [vars]
-ENVIRONMENT = "production"
+BOTNET_API_URL = "https://botnet.firefly-worker.workers.dev"
+
+# Secrets (to be set via wrangler secret put)
+# - BOTNET_MASTER_KEY
+# - SMTP credentials if needed
+
+# Limits
+[limits]
+cpu_ms = 10000  # 10 second CPU limit
+
+# Routes
+routes = [
+  { pattern = "botnet.firefly-worker.workers.dev", custom_domain = false },
+  { pattern = "api.botnet.workers.dev", custom_domain = false }
+]
+
+# Analytics
+[analytics_engine_datasets]
+- binding = "ANALYTICS"
+  dataset = "botnet_analytics"
