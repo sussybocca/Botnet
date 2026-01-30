@@ -16,18 +16,18 @@ vars = {
 }
 
 # Routes (choose one or both)
-routes = [
-  { pattern = "botnet-api.your-domain.workers.dev", custom_domain = true },
-  { pattern = "api.your-domain.com/Botnet/*", zone_name = "your-domain.com" }
-]
+# Uncomment and configure as needed:
+# routes = [
+#   { pattern = "botnet-api.your-domain.workers.dev", custom_domain = true },
+#   { pattern = "api.your-domain.com/Botnet/*", zone_name = "your-domain.com" }
+# ]
 
 # Cron Triggers for scheduled bots (optional)
-triggers = { crons = ["*/10 * * * *"] }
+# triggers = { crons = ["*/10 * * * *"] }
 
 # Limits
 [limits]
 cpu_ms = 10000  # 10 seconds CPU time
-max_scripts = 10
 
 # Build configuration (if using TypeScript or build process)
 [build]
@@ -59,12 +59,3 @@ local_protocol = "http"
 # For larger packages/memory needs
 [placement]
 mode = "smart"
-
-# Logging (for paid plans)
-[logpush]
-enabled = false
-
-# Analytics (for paid plans)
-[analytics_engine_datasets]
-- binding = "BOTNET_ANALYTICS"
-  dataset = "botnet_requests"
