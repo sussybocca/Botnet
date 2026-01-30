@@ -1,21 +1,12 @@
 {
   "name": "botnet-api",
   "version": "1.0.0",
-  "description": "BotNet API - Execute Node.js and Python packages from HTML",
   "main": "worker.js",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "deploy:production": "wrangler deploy --env production",
-    "deploy:staging": "wrangler deploy --env staging",
-    "test": "echo \"No tests yet\" && exit 0",
-    "format": "prettier --write '**/*.{js,json,md}'"
+    "deploy": "wrangler deploy"
   },
-  "keywords": ["cloudflare-workers", "api", "botnet", "javascript", "python"],
-  "author": "Your Name",
-  "license": "MIT",
   "devDependencies": {
-    "wrangler": "^3.0.0",
-    "prettier": "^3.0.0"
+    "wrangler": "^4.0.0"
   }
 }
