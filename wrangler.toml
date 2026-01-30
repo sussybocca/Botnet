@@ -1,17 +1,12 @@
-name = "botnet-worker"
+name = "botnet"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
-# KV Namespace Bindings
+# KV Namespace Binding - GET YOUR ACTUAL ID FROM BELOW COMMANDS
 [[kv_namespaces]]
 binding = "BOTNET_KV"
-id = "your-kv-namespace-id-here"  # Replace with your actual KV namespace ID
-
-# For Analytics (optional - remove if not using)
-# [[analytics_engine_datasets]]
-# binding = "ANALYTICS"
-# dataset = "botnet_analytics"
+id = "4fde3a045be140e28f581b9a3fe3f088"  # ⬅️ Use your actual ID from previous deployment!
 
 # Environment Variables
 [vars]
@@ -20,26 +15,3 @@ BOTNET_API_URL = "https://botnet.firefly-worker.workers.dev"
 # Limits
 [limits]
 cpu_ms = 10000
-
-# Triggers
-[triggers]
-crons = []
-
-# Routes
-routes = [
-  { pattern = "botnet.firefly-worker.workers.dev/*", zone_name = "workers.dev" },
-  { pattern = "api.botnet.workers.dev/*", zone_name = "workers.dev" }
-]
-
-# Deployment Environments (optional)
-[env.production]
-name = "botnet-prod"
-routes = [
-  { pattern = "botnet.firefly-worker.workers.dev/*", zone_name = "workers.dev" }
-]
-
-[env.staging]
-name = "botnet-staging"
-routes = [
-  { pattern = "botnet-staging.firefly-worker.workers.dev/*", zone_name = "workers.dev" }
-]
