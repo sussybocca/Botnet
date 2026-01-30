@@ -1,17 +1,10 @@
 name = "botnet"
 main = "worker.js"
 compatibility_date = "2024-01-01"
-compatibility_flags = ["nodejs_compat"]
 
-# KV Namespace Binding - GET YOUR ACTUAL ID FROM BELOW COMMANDS
 [[kv_namespaces]]
 binding = "BOTNET_KV"
-id = "4fde3a045be140e28f581b9a3fe3f088"  # ⬅️ Use your actual ID from previous deployment!
+id = "4fde3a045be140e28f581b9a3fe3f088"
 
-# Environment Variables
 [vars]
 BOTNET_API_URL = "https://botnet.firefly-worker.workers.dev"
-
-# Limits
-[limits]
-cpu_ms = 10000
