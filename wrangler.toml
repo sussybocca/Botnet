@@ -65,5 +65,3 @@ new_classes = ["PackageSystemDO", "BotManagerDO", "NetworkCompilerDO"]
 [build]
 command = "echo 'Botnet Worker Build'"
 
-[site]
-bucket = "./public"
