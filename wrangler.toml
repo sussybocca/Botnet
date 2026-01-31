@@ -58,10 +58,18 @@ MAX_NETWORK_SIZE = 5000
 [triggers]
 crons = ["0 * * * *", "0 0 * * *"]
 
+
 [[migrations]]
 tag = "v1"
 new_classes = ["PackageSystemDO", "BotManagerDO", "NetworkCompilerDO"]
 
+[[migrations]]
+tag = "v2"
+new_sqlite_classes = [
+  { name = "PackageSystemDO", local_table = "package_system" },
+  { name = "BotManagerDO", local_table = "bot_manager" },
+  { name = "NetworkCompilerDO", local_table = "network_compiler" }
+]
+
 [build]
 command = "echo 'Botnet Worker Build'"
-
