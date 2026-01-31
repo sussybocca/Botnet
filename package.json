@@ -15,7 +15,7 @@
     "wrangler": "^4.0.0"
   },
   "dependencies": {
-    "botnet": "https://botnet.firefly-worker.workers.dev/botnet-client"
+    "@botnet/client": "latest"
   },
   "keywords": ["botnet", "cloudflare", "worker", "network-js", "package-manager", "bot-network"],
   "author": "",
