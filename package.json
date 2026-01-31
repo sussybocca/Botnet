@@ -2,11 +2,34 @@
   "name": "botnet-api",
   "version": "1.0.0",
   "main": "worker.js",
+  "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "curl https://botnet.firefly-worker.workers.dev/health",
+    "create-bot": "curl -X POST https://botnet.firefly-worker.workers.dev/api/bot/create-bot -H 'Content-Type: application/json' -d '{\"botId\":\"test-bot\",\"config\":{\"type\":\"worker\"}}'",
+    "install-package": "curl -X POST https://botnet.firefly-worker.workers.dev/api/package/install-package -H 'Content-Type: application/json' -d '{\"packageName\":\"node-mailer\",\"version\":\"latest\",\"userId\":\"test-user\"}'",
+    "execute-network": "curl -X POST https://botnet.firefly-worker.workers.dev/api/compiler/execute -H 'Content-Type: application/json' -d '{\"code\":\"BOT.send(\\\"bot2\\\", \\\"Hello\\\")\",\"botId\":\"test-bot\"}'"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"
+  },
+  "dependencies": {
+    "botnet": "https://botnet.firefly-worker.workers.dev/botnet-client"
+  },
+  "keywords": ["botnet", "cloudflare", "worker", "network-js", "package-manager", "bot-network"],
+  "author": "",
+  "license": "MIT",
+  "description": "Advanced bot networking system with Network JS language and NPM package integration",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/botnet-worker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/botnet-worker/issues"
+  },
+  "homepage": "https://botnet.firefly-worker.workers.dev",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
