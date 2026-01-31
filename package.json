@@ -15,7 +15,7 @@
     "wrangler": "^4.0.0"
   },
   "dependencies": {
-    "@botnet/client": "latest"
+    "@cloudflare/workers-types": "^4.20231121.0"
   },
   "keywords": ["botnet", "cloudflare", "worker", "network-js", "package-manager", "bot-network"],
   "author": "",
