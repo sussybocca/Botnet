@@ -3,6 +3,7 @@ main = "worker.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
 
+# ===== CORRECT DO BINDINGS =====
 [durable_objects]
 bindings = [
   { name = "PACKAGE_SYSTEM", class_name = "PackageSystemDO" },
@@ -10,19 +11,11 @@ bindings = [
   { name = "NETWORK_COMPILER", class_name = "NetworkCompilerDO" }
 ]
 
-# ADD THIS SECTION - Durable Objects definitions
 [[durable_objects.migrations]]
 tag = "v1"
 new_classes = ["PackageSystemDO", "BotManagerDO", "NetworkCompilerDO"]
 
-[durable_objects.kv]
-bindings = [
-  { name = "BOT_NETWORKS", class_name = "BotManagerDO" },
-  { name = "USER_PACKAGES", class_name = "PackageSystemDO" },
-  { name = "MODIFIED_PACKAGES", class_name = "PackageSystemDO" }
-]
-
-# Your current KV namespaces (these are fine)
+# ===== CORRECT KV BINDINGS =====
 [[kv_namespaces]]
 binding = "BOT_NETWORKS"
 id = "c4500e1168594bfb8d660a24b1236813"
@@ -35,7 +28,7 @@ id = "82e9228716774b61837fde6e49758d07"
 binding = "MODIFIED_PACKAGES"
 id = "6acb8859f7df4d54a9ff9bc847e77cac"
 
-# Optional - you might want these if you need more KV
+# ===== OPTIONAL KV NAMESPACES =====
 [[kv_namespaces]]
 binding = "NETWORK_CODE"
 id = "3b8a18bd5332467bad8e1c584705e08e"
@@ -48,6 +41,7 @@ id = "3ad64189fe7f49efb973c9eb06b87a7a"
 binding = "BOT_STORE"
 id = "59752ef1adf94b24a9cb882963f96644"
 
+# ===== ENVIRONMENT VARIABLES =====
 [vars]
 BOTNET_API_URL = "https://botnet.firefly-worker.workers.dev"
 NPM_REGISTRY = "https://registry.npmjs.org"
