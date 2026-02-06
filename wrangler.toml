@@ -10,9 +10,22 @@ bindings = [
   { name = "NETWORK_COMPILER", class_name = "NetworkCompilerDO" }
 ]
 
+# ADD THIS SECTION - Durable Objects definitions
+[[durable_objects.migrations]]
+tag = "v1"
+new_classes = ["PackageSystemDO", "BotManagerDO", "NetworkCompilerDO"]
+
+[durable_objects.kv]
+bindings = [
+  { name = "BOT_NETWORKS", class_name = "BotManagerDO" },
+  { name = "USER_PACKAGES", class_name = "PackageSystemDO" },
+  { name = "MODIFIED_PACKAGES", class_name = "PackageSystemDO" }
+]
+
+# Your current KV namespaces (these are fine)
 [[kv_namespaces]]
-binding = "BOTNET_KV"
-id = "4fde3a045be140e28f581b9a3fe3f088"
+binding = "BOT_NETWORKS"
+id = "c4500e1168594bfb8d660a24b1236813"
 
 [[kv_namespaces]]
 binding = "USER_PACKAGES"
@@ -22,10 +35,7 @@ id = "82e9228716774b61837fde6e49758d07"
 binding = "MODIFIED_PACKAGES"
 id = "6acb8859f7df4d54a9ff9bc847e77cac"
 
-[[kv_namespaces]]
-binding = "BOT_NETWORKS"
-id = "c4500e1168594bfb8d660a24b1236813"
-
+# Optional - you might want these if you need more KV
 [[kv_namespaces]]
 binding = "NETWORK_CODE"
 id = "3b8a18bd5332467bad8e1c584705e08e"
@@ -41,7 +51,6 @@ id = "59752ef1adf94b24a9cb882963f96644"
 [vars]
 BOTNET_API_URL = "https://botnet.firefly-worker.workers.dev"
 NPM_REGISTRY = "https://registry.npmjs.org"
-UNPKG_URL = "https://unpkg.com"
 ENVIRONMENT = "production"
 NETWORK_JS_VERSION = "2.0.0"
 MAX_BOTS_PER_NETWORK = 1000
@@ -49,7 +58,7 @@ MAX_PACKAGES_PER_USER = 100
 PACKAGE_TIMEOUT = 30000
 NETWORK_TIMEOUT = 60000
 ENABLE_CUSTOM_PACKAGES = "true"
-ENABLE_TRANSFORMERS = "false"
+ENABLE_TRANSFORMERS = "true"
 ALLOW_NPM_REGISTRY = "true"
 MAX_PACKAGE_SIZE = "10MB"
 CACHE_TTL = 3600
@@ -57,11 +66,6 @@ MAX_NETWORK_SIZE = 5000
 
 [triggers]
 crons = ["0 * * * *", "0 0 * * *"]
-
-
-[[migrations]]
-tag = "v1"
-new_sqlite_classes = ["PackageSystemDO", "BotManagerDO", "NetworkCompilerDO"]
 
 [build]
 command = "echo 'Botnet Worker Build'"
